@@ -4,13 +4,35 @@
   // Dynamic => Display different content for each user, allow for user interation
 
 // ✅ Handling Click and Submit Events
-     
-  // addEventListener(event, callbackFunction);
+    // DOMContentLoaded is the first event triggering as soon as the page loaded
+    //as a suggestion, always place a debugger inside the callback to see what the callback has access to
+
+    // document.addEventListener("DOMContentLoaded", (e) => {
+    //   debugger
+    // })
+
+    // Target the submit button
+    // const submitButton = document.querySelector("#submit-button")
+    
+    // Attach a listener to the button - the preferred way
+    //submitButton.addEventListener("click", doSomething);
+    // 
+    // function doSomething(e) {
+    //   e.preventDefault()
+    //   console.log(e, "Hello now after a click!")
+    // }
+
+
+    // Attach a listener to the button - the alternative way
+    // submitButton.onclick = function doSomething(e) {
+    //   // e.preventDefault()
+    //   console.log(e, "Hello now after a click!")
+    // }
 
     // when would we define callbackFunction as an anonymous function instead
-    // of as a function reference?
+    // of as a function reference? ---> When the function expects arguments!
 
-      // addEventListener("click", () => console.log("Test"));
+      // addEventListener("click", (e) => doSomething(e, argumentHere));
         // vs. 
       // addEventListener("click", doSomething);
 
@@ -133,13 +155,14 @@ console.log("------------------------");
       likeBttn.textContent = "♥";
       
       // ❗ add likeBttn event listener ❗
-
+      likeBttn.addEventListener("click", (e) => addLike(pokemon, e))
       // set deleteBtt attributes
       deleteBttn.className = "delete-bttn";
       deleteBttn.textContent = "Delete";
   
       // ❗ add deleteBttn event listener ❗
-  
+      deleteBttn.addEventListener("click", deletePoke)
+
       // append DOM elements to pokeCard
       pokeCard.append(pokeImg, pokeName, pokeLikes, likesNum, likeBttn, deleteBttn);
       
@@ -147,20 +170,23 @@ console.log("------------------------");
       pokeContainer.append(pokeCard);
     };
 
-    function addLike(pokemon, likesNum){
-    //   // ❗ your code here
+    function addLike(pokemon, e){
+      //  pokemon.likes += 1
+      ++pokemon.likes
+      const h5 = e.target.parentElement.querySelector("h5")
+      h5.textContent = pokemon.likes
     }
 
-    function deletePoke(pokeCard){
-    //   // ❗ your code here
+    function deletePoke(e){
+      e.target.parentElement.remove()
     }
 
 	// ✅ Check Answer: 
-	function init() {
-		pokemons.forEach(renderPokemon);
-	}
+	// function init() {
+	// 	pokemons.forEach(renderPokemon);
+	// }
 
-	init();
+	// init();
 
 // 🚧 Break Out Activity 2: Handling Submit Events
 
@@ -186,15 +212,39 @@ console.log("------------------------");
     //  ✔️ Resets pokeForm using .reset() 
 
 	// 	💡 Use Chrome Dev Tools to view changes being made to the DOM
-  
-    // function createPokemon(){
-    //   // ❗ your code here
-    // }
 
   // ✅ Check Answer: 
-  // function init() {
-  //   pokemons.forEach(renderPokemon);
-  //   pokeForm.addEventListener('submit', createPokemon)
-  // }
+  function init() {
+    pokemons.forEach(renderPokemon);
+    pokeForm.addEventListener('submit', createPokemon)
+  }
+
+  init()
+
+  function createPokemon(e){
+    // prevent default behavior of a form
+    e.preventDefault();
+    // gather input value
+    // let pokeName = document.getElementById('name-input').value;
+    let pokeName = pokeForm.querySelector('#name-input').value;  
+    let lastPokemonId = pokemons.slice(-1)[0].id;
+
+    // create new pokemon object
+    let newPokemon = {
+      id: lastPokemonId + 1,
+      // id: pokemons.length + 1,
+      name: pokeName,
+      img: './images/whos_that_pokemon.png',
+      likes: 0,
+    }
   
-  // init()
+    // add newPokemon object to pokemons
+    pokemons.push(newPokemon);
+
+    // create a new card for new pokemon
+    renderPokemon(newPokemon);
+
+    // clear out form inputs
+    pokeForm.reset();
+  }
+  
